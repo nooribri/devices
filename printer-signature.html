@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>تقرير الأجهزة</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      direction: rtl;
+      background-color: #f0f0f0;
+      margin: 0; padding: 0 10px;
+    }
+    h2 { text-align: center; margin-top: 20px; }
+    form {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+      max-width: 600px;
+      margin: 20px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    input, textarea, button {
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: green;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover { background-color: darkgreen; }
+    .search-container {
+      text-align: center;
+      margin: 20px auto;
+    }
+    .search-container input {
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 300px;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/622/622669.png');
+      background-size: 18px;
+      background-repeat: no-repeat;
+      background-position: 10px center;
+      padding-right: 35px;
+    }
+    table {
+      width: 100%;
+      background: #fff;
+      margin: 20px auto;
+      border-collapse: collapse;
+      box-shadow: 0 0 10px #ccc;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    th { background-color: #007bff; color: white; }
+    .actions button {
+      margin: 0 2px;
+      padding: 6px 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+    .edit-btn { background-color: #28a745; color: white; }
+    .delete-btn { background-color: #dc3545; color: white; }
+    .export-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .footer-button {
+      text-align: center;
+      margin: 25px;
+    }
+    @media print {
+      form,
+      .search-container,
+      .export-buttons,
+      .footer-button,
+      th.actions,
+      td.actions {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>بيانات الطابعات وأجهزة التوقيع الإكتروني</h2>
+
+  <form id="deviceForm">
+    <input type="text" id="deviceName" name="deviceName" placeholder="اسم الجهاز" required>
+    <input type="text" id="deviceType" name="deviceType" placeholder="نوع الجهاز" required>
+    <input type="text" id="serialNumber" name="serialNumber" placeholder="الرقم التسلسل للجهاز" required>
+    <input type="text" id="deviceLocation" name="deviceLocation" placeholder="موقع الجهاز" required>
+    <textarea id="notes" name="notes" placeholder="ملاحظات"></textarea>
+    <button type="submit">إرسال</button>
+    <div id="status"></div>
+  </form>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="🔍 ابحث في كل الحقول">
+  </div>
+
+  <div id="loading">جاري تحميل البيانات...</div>
+
+  <table id="deviceTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>اسم الجهاز</th>
+        <th>نوع الجهاز</th>
+        <th>الرقم التسلسل للجهاز</th>
+        <th>موقع الجهاز</th>
+        <th>ملاحظات</th>
+        <th class="actions">الإجراء</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <div class="export-buttons">
+    <button onclick="exportToExcel()">تصدير Excel</button>
+    <button onclick="exportToPDF()">تصدير PDF</button>
+    <button onclick="window.print()">🖨️ طباعة</button>
+  </div>
+
+  <div class="footer-button">
+    <button onclick="location.href='index.html'">↩️ رجوع</button>
+  </div>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzxMhNY5gMb6e5SXDhyiKlwxHVvDfsdLn3SMhSzIMphrgVPnl81ScWbeyu2NPCJkVeE/exec";
+
+    document.getElementById('deviceForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const status = document.getElementById("status");
+      status.textContent = "جارٍ الإرسال...";
+
+      const data = {
+        deviceName: deviceForm.deviceName.value,
+        deviceType: deviceForm.deviceType.value,
+        serialNumber: deviceForm.serialNumber.value,
+        deviceLocation: deviceForm.deviceLocation.value,
+        notes: deviceForm.notes.value,
+        type: "طابعة"  // 🔁 غيّر إلى "توقيع إلكتروني" حسب نوع الجهاز
+      };
+
+      fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify(data)
+      })
+      .then(res => res.text())
+      .then(() => {
+        status.textContent = "✅ تم حفظ البيانات بنجاح";
+        deviceForm.reset();
+        loadData();
+      })
+      .catch(() => {
+        status.textContent = "❌ حدث خطأ أثناء الإرسال";
+      });
+    });
+
+    function loadData() {
+      fetch(scriptURL)
+        .then(res => res.json())
+        .then(data => {
+          const table = document.getElementById("deviceTable");
+          const tbody = document.getElementById("tableBody");
+          const loading = document.getElementById("loading");
+
+          loading.style.display = "none";
+          table.style.display = "table";
+          tbody.innerHTML = "";
+
+          data.forEach(row => {
+            if (row.type === "طابعة") {  // 🔁 أو "توقيع إلكتروني"
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                <td>${row.deviceName || ""}</td>
+                <td>${row.deviceType || ""}</td>
+                <td>${row.serialNumber || ""}</td>
+                <td>${row.deviceLocation || ""}</td>
+                <td>${row.notes || ""}</td>
+                <td class="actions">
+                  <button class="edit-btn">✏️ تعديل</button>
+                  <button class="delete-btn">🗑️ حذف</button>
+                </td>
+              `;
+              tbody.appendChild(tr);
+            }
+          });
+        })
+        .catch(() => {
+          document.getElementById("loading").textContent = "❌ حدث خطأ أثناء تحميل البيانات.";
+        });
+    }
+
+    function exportToExcel() {
+      const table = document.getElementById("deviceTable");
+      const wb = XLSX.utils.table_to_book(table, { sheet: "تقرير الطابعات وأجهزة التوقيع الإكتروني "});
+      XLSX.writeFile(wb, "تقرير_الأجهزة.xlsx");
+    }
+
+    function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+
+      doc.setFont("Helvetica");
+      doc.setFontSize(14);
+      doc.text("تقرير الأجهزة", 300, 40, { align: "center" });
+
+      const headers = [["اسم الجهاز", "نوع الجهاز","الرقم التسلسل للجهاز", "موقع الجهاز", "ملاحظات"]];
+      const data = [];
+
+      document.querySelectorAll("#tableBody tr").forEach(row => {
+        const cells = row.querySelectorAll("td");
+        if (cells.length >= 5) {
+          data.push([
+            cells[0].innerText.trim(),
+            cells[1].innerText.trim(),
+            cells[2].innerText.trim(),
+            cells[3].innerText.trim(),
+            cells[4].innerText.trim()
+          ]);
+        }
+      });
+
+      doc.autoTable({
+        head: headers,
+        body: data,
+        startY: 60,
+        styles: { font: "helvetica", fontSize: 10, halign: 'right' },
+        headStyles: { fillColor: [0, 123, 255], textColor: [255, 255, 255] },
+        margin: { left: 30, right: 30 }
+      });
+
+      doc.save("تقرير_الأجهزة.pdf");
+    }
+
+    document.getElementById("searchInput").addEventListener("keyup", function () {
+      const searchValue = this.value.toLowerCase();
+      const rows = document.querySelectorAll("#tableBody tr");
+      rows.forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(searchValue) ? "" : "none";
+      });
+    });
+
+    window.onload = loadData;
+  </script>
+</body>
+</html>

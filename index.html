@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8" />
+<title>نظام تقنية المعلومات - الصفحة الرئيسية</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@600&display=swap');
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    direction: rtl;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #f0f0f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header {
+    padding: 25px 10px;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    background: rgba(0,0,0,0.4);
+    width: 100%;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+  }
+
+  .container {
+    margin-top: 40px;
+    width: 90%;
+    max-width: 1000px;
+  }
+
+  .section-title {
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 15px;
+    border-bottom: 3px solid #00d8ff;
+    padding-bottom: 8px;
+    color: #00d8ff;
+  }
+
+  
+.cards-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+
+
+  .card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  border-radius: 12px;
+  width: calc(33.333% - 40px); /* حتى تُعرض 3 في الصف مع الفراغات */
+  min-width: 200px;
+  max-width: 220px;
+  height: 180px;
+  box-shadow: 0 0 10px #00d8ff44;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  text-align: center;
+  color: #e0f7ff;
+  user-select: none;
+}
+
+
+  .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px #00d8ffbb;
+  }
+
+  .card img {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 12px;
+  }
+
+  .card span {
+    font-weight: 700;
+    font-size: 16px;
+    padding: 0 8px;
+    word-wrap: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+
+  .cards-row::-webkit-scrollbar {
+    height: 8px;
+  }
+  .cards-row::-webkit-scrollbar-thumb {
+    background: #00d8ff88;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 768px) {
+  .card {
+    width: 100%;
+  }
+}
+ 
+    .container {
+      max-width: 100%;
+      padding: 0 10px;
+    }
+  
+
+  .login-container {
+      width: 300px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .login-container input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    .login-container button {
+      background-color: #0d47a1;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .login-container button:hover {
+      background-color: #1565c0;
+    }
+
+</style>
+</head>
+<body>
+
+<header>إدارة أنظمة وأجهزة قسم تقنية المعلومات - إدارة حماية المستهلك بمحافظة الظاهرة</header>
+
+<div class="login-container" id="loginBox">
+  
+    <h3>تسجيل دخول موظف التقنية</h3>
+    <input type="text" id="empID" placeholder="أدخل رقمك الوظيفي">
+    <button onclick="login()">دخول</button>
+    
+</div>
+
+<div id="mainMenu" style="display: none;">
+  <div class="container">
+
+    <div>
+      <div class="section-title">📋   النماذج والتقارير</div>
+      <div class="cards-row">
+        <div class="card" onclick="location.href='employee.html'">
+          <img src="https://img.icons8.com/ios-filled/100/00d8ff/user-male-circle.png" alt="بيانات الموظفين" />
+          <span>بيانات الموظفين</span>
+        </div>
+        <div class="card" onclick="location.href='new-device.html'">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjJ2wyUvHjRt6RuQCKXhS-3okcMwuRRfk5reUFvwdisKPczXG0k4tMRuUQMPh78k5JUj8&usqp=CAU.png" alt="الأجهزة الجديدة" />
+          <span>الأجهزة الجديدة</span>
+        </div>
+        <div class="card" onclick="location.href='old-device.html'">
+          <img src="https://4.imimg.com/data4/TL/VG/MY-15540596/computer-repair-services.png" alt="الأجهزة القديمة" />
+          <span>الأجهزة القديمة</span>
+        </div>
+        <div class="card" onclick="location.href='scrap-device.html'">
+          <img src="https://cdn-icons-png.flaticon.com/128/556/556261.png" alt="الأجهزة المحالة للشطب" />
+          <span>الأجهزة المحالة للشطب</span>
+        </div>
+        <div class="card" onclick="location.href='printer-signature.html'">
+          <img src="https://cdn-icons-png.flaticon.com/128/1497/1497542.png" alt="الطابعات وأجهزة التوقيع الإكتروني"/>
+          <span>بيانات الطابعات وأجهزة التوقيع الإكتروني</span>
+        </div>
+        <div class="card" onclick="location.href='laptop-device.html'">
+          <img src="https://cdn.pixabay.com/photo/2016/08/28/17/30/laptop-1626471_1280.png" alt="أجهزة اللابتوب"/>
+          <span>أجهزة اللابتوب</span>
+        </div>
+    
+<script>
+  const allowedIDs = ['376', '373','5011','2271', '5010'];
+
+  function login() {
+    const empInput = document.getElementById('empID');
+    const id = empInput.value;
+
+    if (allowedIDs.includes(id)) {
+      // امسح الحقل وأخفه واحذف الرقم من الذاكرة
+      empInput.value = '';
+      empInput.style.display = 'none';
+
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('mainMenu').style.display = 'block';
+
+      sessionStorage.setItem('authenticated', 'true');
+    } else {
+      alert('غير مصرح لك بالدخول.');
+    }
+  }
+
+  window.onload = () => {
+    if (sessionStorage.getItem('authenticated') === 'true') {
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('mainMenu').style.display = 'block';
+    }
+  };
+</script>
+
+</body>
+</html>
